@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+use Spacio\Framework\Core\Support\Console as ConsoleSupport;
+use Symfony\Component\Console\Application;
+
+define('BASE_PATH', __DIR__);
+
+require_once BASE_PATH.'/vendor/autoload.php';
+
+$app = new Application('Spacio', '0.1.0');
+
+ConsoleSupport::registerCommands($app, [
+    BASE_PATH.'/app/Console/Commands' => 'App\\Console\\Commands',
+    BASE_PATH.'/src/Console/Commands' => 'Spacio\\Framework\\Console\\Commands',
+]);
+
+$app->setDefaultCommand('about');
+$app->run();
