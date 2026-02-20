@@ -11,7 +11,7 @@ return [
 
     'connections' => [
         'sqlite' => [
-            'database' => env('DB_DATABASE', BASE_PATH.'/database/database.sqlite'),
+            'database' => env('DB_DATABASE', 'database/database.sqlite'),
         ],
     ],
 ];
