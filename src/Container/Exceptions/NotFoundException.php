@@ -2,6 +2,7 @@
 
 namespace Spacio\Framework\Container\Exceptions;
 
-class NotFoundException extends ContainerException {
+class NotFoundException extends ContainerException
+{
     //
 }

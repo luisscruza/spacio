@@ -11,6 +11,7 @@ class Kernel
 {
     public function __construct(
         protected Container $container,
+        protected ControllerResolver $resolver,
     ) {}
 
     public function handle(Request $request): Response
@@ -34,8 +35,12 @@ class Kernel
 
         [$status, [$controller, $method], $vars] = $routeInfo;
 
-        $controllerInstance = $this->container->get($controller);
+        [$controllerInstance, $method, $arguments] = $this->resolver->resolve(
+            $controller,
+            $method,
+            $vars
+        );
 
-        return call_user_func_array([$controllerInstance, $method], $vars);
+        return call_user_func_array([$controllerInstance, $method], $arguments);
     }
 }

@@ -11,7 +11,7 @@ $container = require BASE_PATH.'/bootstrap/app.php';
 
 $request = Request::create();
 
-$kernel = new Kernel($container);
+$kernel = $container->get(Kernel::class);
 
 $response = $kernel->handle($request);
 
