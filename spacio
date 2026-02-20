@@ -2,6 +2,7 @@
 <?php
 
 use Spacio\Framework\Core\Support\Console as ConsoleSupport;
+use Spacio\Framework\Core\Support\App;
 use Symfony\Component\Console\Application;
 
 define('BASE_PATH', __DIR__);
@@ -9,6 +10,7 @@ define('BASE_PATH', __DIR__);
 require_once BASE_PATH.'/vendor/autoload.php';
 
 $app = new Application('Spacio', '0.1.0');
+App::setContainer(require BASE_PATH.'/bootstrap/app.php');
 
 ConsoleSupport::registerCommands($app, [
     BASE_PATH.'/app/Console/Commands' => 'App\\Console\\Commands',
