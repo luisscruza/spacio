@@ -3,13 +3,20 @@
 namespace Spacio\Framework\Http;
 
 use FastRoute\RouteCollector;
+use Spacio\Framework\Container\Container;
 
 use function FastRoute\simpleDispatcher;
 
 class Kernel
 {
+    public function __construct(
+        protected Container $container,
+    ) {}
+
     public function handle(Request $request): Response
     {
+        $this->container->instance(Request::class, $request);
+
         $dispatcher = simpleDispatcher(function (RouteCollector $collector) {
             $routes = require BASE_PATH.'/routes/web.php';
 
@@ -27,6 +34,8 @@ class Kernel
 
         [$status, [$controller, $method], $vars] = $routeInfo;
 
-        return call_user_func_array([new $controller, $method], $vars);
+        $controllerInstance = $this->container->get($controller);
+
+        return call_user_func_array([$controllerInstance, $method], $vars);
     }
 }

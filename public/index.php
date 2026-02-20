@@ -7,9 +7,11 @@ define('BASE_PATH', dirname(__DIR__));
 
 require_once BASE_PATH.'/vendor/autoload.php';
 
+$container = require BASE_PATH.'/bootstrap/app.php';
+
 $request = Request::create();
 
-$kernel = new Kernel;
+$kernel = new Kernel($container);
 
 $response = $kernel->handle($request);
 
