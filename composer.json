@@ -1,0 +1,30 @@
+{
+    "name": "cruzmediaorg/spacio",
+    "description": "A slim PHP framework",
+    "type": "framework",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.4",
+        "symfony/var-dumper": "^8.0",
+        "nikic/fast-route": "^1.3",
+        "twig/twig": "^3.23"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spacio\\Framework\\": "src/",
+            "App\\": "app/"
+        },
+        "files": [
+            "helpers.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Luis De la Cruz",
+            "email": "cruzmediaorg@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "laravel/pint": "^1.27"
+    }
+}
