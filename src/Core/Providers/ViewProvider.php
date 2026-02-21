@@ -17,28 +17,21 @@ class ViewProvider extends ServiceProvider
     {
         $this->container->singleton(DirectiveRegistry::class, function (Container $container) {
             $registry = new DirectiveRegistry;
+            $config = $container->get(ConfigRepository::class)->get('view', []);
+            $paths = $config['directives']['paths'] ?? [];
+            $namespaces = $config['directives']['namespaces'] ?? [];
 
-            $groups = [
-                [
-                    'path' => BASE_PATH.'/src/View/Directives',
-                    'namespace' => 'Spacio\\Framework\\View\\Directives',
-                ],
-                [
-                    'path' => BASE_PATH.'/app/View/Directives',
-                    'namespace' => 'App\\View\\Directives',
-                ],
-            ];
-
-            foreach ($groups as $group) {
-                if (! is_dir($group['path'])) {
+            foreach ($paths as $index => $path) {
+                $namespace = $namespaces[$index] ?? null;
+                if (! $namespace || ! is_dir($path)) {
                     continue;
                 }
 
-                $files = glob($group['path'].'/*.php') ?: [];
+                $files = glob($path.'/*.php') ?: [];
                 sort($files);
 
                 foreach ($files as $file) {
-                    $class = $group['namespace'].'\\'.pathinfo($file, PATHINFO_FILENAME);
+                    $class = $namespace.'\\'.pathinfo($file, PATHINFO_FILENAME);
 
                     if (! class_exists($class)) {
                         continue;
