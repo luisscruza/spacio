@@ -7,7 +7,7 @@ use Spacio\Framework\Container\Container;
 use Spacio\Framework\Core\Config\ConfigRepository;
 use Spacio\Framework\View\Compilers\TemplateCompiler;
 use Spacio\Framework\View\DirectiveRegistry;
-use Spacio\Framework\View\Directives\Directive;
+use Spacio\Framework\View\Contracts\Directive;
 use Spacio\Framework\View\SectionExtractor;
 use Spacio\Framework\View\ViewEngine;
 
