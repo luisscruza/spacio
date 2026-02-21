@@ -10,7 +10,7 @@ class CreateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:2|max:120',
-            'email' => 'nullable|email',
+            'email' => 'nullable|email|unique:users,email',
         ];
     }
 
@@ -20,6 +20,7 @@ class CreateUserRequest extends FormRequest
             'name.required' => 'Please enter a name.',
             'name.min' => 'Name must be at least 2 characters.',
             'email.email' => 'Email must be a valid address.',
+            'email.unique' => 'This email is already taken.',
         ];
     }
 }
