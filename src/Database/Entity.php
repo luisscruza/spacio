@@ -6,6 +6,7 @@ use PDO;
 use ReflectionClass;
 use Spacio\Framework\Database\Attributes\Table;
 use Spacio\Framework\Database\Contracts\ConnectionInterface;
+use Spacio\Framework\Database\Exceptions\AttributeNotFoundException;
 
 abstract class Entity
 {
@@ -35,6 +36,18 @@ abstract class Entity
         );
     }
 
+    public static function resolveRouteBinding(int|string $value): ?static
+    {
+        $instance = new static;
+        $record = $instance->find($value);
+
+        if (! $record) {
+            return null;
+        }
+
+        return $instance->fill($record);
+    }
+
     public static function create(array $attributes): static
     {
         $entity = static::query()->create($attributes);
@@ -47,6 +60,56 @@ abstract class Entity
         $this->attributes = array_merge($this->attributes, $attributes);
 
         return $this;
+    }
+
+    public function getAttribute(string $key): mixed
+    {
+        return $this->attributes[$key] ?? null;
+    }
+
+    public function setAttribute(string $key, mixed $value): static
+    {
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    public function __get(string $key): mixed
+    {
+        $getter = $this->attributeGetter($key);
+
+        if ($getter && method_exists($this, $getter)) {
+            return $this->{$getter}();
+        }
+
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
+        }
+
+        throw new AttributeNotFoundException("Attribute [{$key}] not found.");
+    }
+
+    public function __set(string $key, mixed $value): void
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    public function __isset(string $key): bool
+    {
+        $getter = $this->attributeGetter($key);
+
+        if ($getter && method_exists($this, $getter)) {
+            return true;
+        }
+
+        return array_key_exists($key, $this->attributes);
+    }
+
+    protected function attributeGetter(string $key): string
+    {
+        $studly = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $key)));
+
+        return 'get'.$studly.'Attribute';
     }
 
     public function save(): void
