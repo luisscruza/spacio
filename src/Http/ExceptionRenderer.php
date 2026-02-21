@@ -23,15 +23,36 @@ class ExceptionRenderer
             $markdown = $this->buildMarkdown($throwable, $request);
         }
 
-        $template = BASE_PATH.'/src/Http/views/exception.php';
-        if (! is_file($template)) {
-            return $message;
-        }
+        return $this->renderTemplate([
+            'debug' => $debug,
+            'title' => $title,
+            'message' => $message,
+            'path' => $path,
+            'method' => $method,
+            'location' => $location,
+            'trace' => $trace,
+            'markdown' => $markdown,
+        ]);
+    }
 
-        ob_start();
-        include $template;
+    public function renderStatus(int $status, string $message, Request $request): string
+    {
+        $title = match ($status) {
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            default => 'Server Error',
+        };
 
-        return (string) ob_get_clean();
+        return $this->renderTemplate([
+            'debug' => false,
+            'title' => $title,
+            'message' => $message,
+            'path' => $request->getUri(),
+            'method' => $request->getMethod(),
+            'location' => '',
+            'trace' => '',
+            'markdown' => '',
+        ]);
     }
 
     protected function buildMarkdown(Throwable $throwable, Request $request): string
@@ -73,5 +94,27 @@ MD;
         $value = strtolower(trim((string) $value));
 
         return in_array($value, ['1', 'true', 'yes', 'on'], true);
+    }
+
+    protected function renderTemplate(array $data): string
+    {
+        $template = BASE_PATH.'/src/Http/views/exception.php';
+        if (! is_file($template)) {
+            return $data['message'] ?? 'Server Error';
+        }
+
+        $debug = (bool) ($data['debug'] ?? false);
+        $title = (string) ($data['title'] ?? 'Server Error');
+        $message = (string) ($data['message'] ?? 'Something went wrong.');
+        $path = (string) ($data['path'] ?? '');
+        $method = (string) ($data['method'] ?? '');
+        $location = (string) ($data['location'] ?? '');
+        $trace = (string) ($data['trace'] ?? '');
+        $markdown = (string) ($data['markdown'] ?? '');
+
+        ob_start();
+        include $template;
+
+        return (string) ob_get_clean();
     }
 }

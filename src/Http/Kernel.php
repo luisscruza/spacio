@@ -4,21 +4,21 @@ namespace Spacio\Framework\Http;
 
 use FastRoute\RouteCollector;
 use Spacio\Framework\Container\Container;
-
 use Throwable;
+
 use function FastRoute\simpleDispatcher;
 
 class Kernel
 {
     public function __construct(
         protected Container $container,
-        protected ControllerResolver $resolver,
     ) {}
 
     public function handle(Request $request): Response
     {
         try {
             $this->container->instance(Request::class, $request);
+            $routeHandler = $this->container->get(RouteHandler::class);
 
             $dispatcher = simpleDispatcher(function (RouteCollector $collector) {
                 $routes = require BASE_PATH.'/routes/web.php';
@@ -35,15 +35,7 @@ class Kernel
                 $request->getUri()
             );
 
-            [$status, [$controller, $method], $vars] = $routeInfo;
-
-            [$controllerInstance, $method, $arguments] = $this->resolver->resolve(
-                $controller,
-                $method,
-                $vars
-            );
-
-            return call_user_func_array([$controllerInstance, $method], $arguments);
+            return $routeHandler->handle($routeInfo, $request);
         } catch (Throwable $throwable) {
             $renderer = new ExceptionRenderer;
             $content = $renderer->render($throwable, $request);
