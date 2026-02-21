@@ -53,6 +53,11 @@ class Request
         return $this->server['REQUEST_URI'];
     }
 
+    public function server(string $key, mixed $default = null): mixed
+    {
+        return $this->server[$key] ?? $default;
+    }
+
     public function all(): array
     {
         return array_merge($this->get, $this->post);
