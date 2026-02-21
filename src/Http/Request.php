@@ -40,4 +40,9 @@ class Request
     {
         return $this->server['REQUEST_URI'];
     }
+
+    public function all(): array
+    {
+        return array_merge($this->get, $this->post);
+    }
 }

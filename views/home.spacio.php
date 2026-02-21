@@ -14,7 +14,7 @@
                         <h1 class="mt-4 text-3xl font-semibold text-stone-900">Users</h1>
                         <p class="mt-2 text-sm text-stone-500">Browse, manage, and jump into a profile.</p>
                     </div>
-                    <a href="/users/new" class="inline-flex items-center justify-center rounded-full border border-stone-200 bg-white px-5 py-2 text-sm font-semibold text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-stone-300 hover:text-stone-900">Create new user</a>
+                    <a href="/users/create" class="inline-flex items-center justify-center rounded-full border border-stone-200 bg-white px-5 py-2 text-sm font-semibold text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:border-stone-300 hover:text-stone-900">Create new user</a>
                 </div>
 
                 <div class="mt-8 space-y-4">

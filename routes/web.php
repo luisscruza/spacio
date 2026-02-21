@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
-
+/**
+ * You may define your web routes here.
+ * Or use #[Route] attributes in your controller classes.
+ */
 return [
-    ['GET', '/', [HomeController::class, 'index']],
-    ['GET', '/users/{user}', [UserController::class, 'show']],
+    //    ['GET', '/', [HomeController::class, 'index']],
 ];
