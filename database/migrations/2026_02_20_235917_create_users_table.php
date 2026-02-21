@@ -1,0 +1,13 @@
+<?php
+
+use Spacio\Framework\Database\Migrations\Migration;
+use Spacio\Framework\Database\Contracts\ConnectionInterface;
+
+return new class extends Migration {
+    public function up(ConnectionInterface $connection): void
+    {
+        $connection->pdo()->exec(
+            "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT)"
+        );
+    }
+};
