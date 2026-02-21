@@ -52,14 +52,14 @@ class NewMigrationCommand extends Command
     protected function buildStub(string $name): string
     {
         $stubPath = BASE_PATH.'/src/Stubs/migration.stub';
-        $sql = $this->guessSql($name);
+        $table = $this->guessTable($name);
 
         if (is_file($stubPath)) {
             $stub = file_get_contents($stubPath);
 
             return str_replace(
-                ['{{ sql }}'],
-                [$sql],
+                ['{{ table }}'],
+                [$table],
                 $stub
             );
         }
@@ -69,26 +69,25 @@ class NewMigrationCommand extends Command
 
 use Spacio\Framework\Database\Migrations\Migration;
 use Spacio\Framework\Database\Contracts\ConnectionInterface;
+use Spacio\Framework\Database\Schema\Table;
 
 return new class extends Migration {
     public function up(ConnectionInterface \$connection): void
     {
-        \$connection->pdo()->exec(
-            "{$sql}"
-        );
+        Table::create('{$table}', [
+            'id' => ['integer', 'pk', 'autoincrement'],
+        ], \$connection);
     }
 };
 PHP;
     }
 
-    protected function guessSql(string $name): string
+    protected function guessTable(string $name): string
     {
         if (str_starts_with($name, 'create_') && str_ends_with($name, '_table')) {
-            $table = substr($name, 7, -6);
-
-            return "CREATE TABLE {$table} (id INTEGER PRIMARY KEY AUTOINCREMENT)";
+            return substr($name, 7, -6);
         }
 
-        return 'SELECT 1';
+        return 'table_name';
     }
 }
