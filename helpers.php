@@ -8,7 +8,7 @@ use Spacio\Framework\View\ViewEngine;
 if (! function_exists('view')) {
     function view(string $name, array $data = []): Response
     {
-        $engine = new ViewEngine(BASE_PATH.'/views');
+        $engine = app(ViewEngine::class);
         $content = $engine->render($name, $data);
 
         return new Response($content);
