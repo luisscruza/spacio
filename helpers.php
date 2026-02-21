@@ -15,6 +15,43 @@ if (! function_exists('view')) {
     }
 }
 
+if (! function_exists('view_render')) {
+    function view_render(string $name, array $data = []): string
+    {
+        $engine = app(ViewEngine::class);
+
+        return $engine->renderPartial($name, $data);
+    }
+}
+
+if (! function_exists('view_extend')) {
+    function view_extend(string $view): void
+    {
+        ViewEngine::extend($view);
+    }
+}
+
+if (! function_exists('view_section_start')) {
+    function view_section_start(string $name): void
+    {
+        ViewEngine::sectionStart($name);
+    }
+}
+
+if (! function_exists('view_section_end')) {
+    function view_section_end(): void
+    {
+        ViewEngine::sectionEnd();
+    }
+}
+
+if (! function_exists('view_yield')) {
+    function view_yield(string $name, string $default = ''): string
+    {
+        return ViewEngine::yield($name, $default);
+    }
+}
+
 if (! function_exists('app')) {
     function app(?string $id = null): mixed
     {
