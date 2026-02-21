@@ -3,6 +3,7 @@
 use Spacio\Framework\Core\Config\ConfigRepository;
 use Spacio\Framework\Core\Support\App;
 use Spacio\Framework\Http\Response;
+use Spacio\Framework\Http\Session;
 use Spacio\Framework\View\ViewEngine;
 
 if (! function_exists('view')) {
@@ -49,6 +50,59 @@ if (! function_exists('view_yield')) {
     function view_yield(string $name, string $default = ''): string
     {
         return ViewEngine::yield($name, $default);
+    }
+}
+
+if (! function_exists('errors')) {
+    function errors(?string $key = null): mixed
+    {
+        static $bag;
+
+        if ($bag === null) {
+            $bag = Session::pullFlash('errors', []);
+        }
+
+        if ($key === null) {
+            return $bag;
+        }
+
+        return $bag[$key] ?? null;
+    }
+}
+
+if (! function_exists('old')) {
+    function old(string $key, mixed $default = null): mixed
+    {
+        static $values;
+
+        if ($values === null) {
+            $values = Session::pullFlash('old', []);
+        }
+
+        return $values[$key] ?? $default;
+    }
+}
+
+if (! function_exists('view_errors')) {
+    function view_errors(?string $key = null): string
+    {
+        $bag = errors();
+
+        if ($key !== null) {
+            $messages = $bag[$key] ?? [];
+
+            return $messages ? e((string) $messages[0]) : '';
+        }
+
+        if (! $bag) {
+            return '';
+        }
+
+        $items = array_map(function (array $messages): string {
+            return '<li>'.e((string) $messages[0]).'</li>';
+        }, $bag);
+
+        return '<ul>'.implode('', $items).'</ul>';
     }
 }
 
