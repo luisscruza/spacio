@@ -6,6 +6,7 @@ use Spacio\Framework\Container\Container;
 use Spacio\Framework\Http\ControllerResolver;
 use Spacio\Framework\Http\ExceptionRenderer;
 use Spacio\Framework\Http\RouteHandler;
+use Spacio\Framework\Http\RouteRegistrar;
 
 class HttpProvider extends ServiceProvider
 {
@@ -23,6 +24,12 @@ class HttpProvider extends ServiceProvider
             return new RouteHandler(
                 $container->get(ControllerResolver::class),
                 $container->get(ExceptionRenderer::class)
+            );
+        });
+
+        $this->container->singleton(RouteRegistrar::class, function (Container $container) {
+            return new RouteRegistrar(
+                $container->get(\Spacio\Framework\Core\Config\ConfigRepository::class)
             );
         });
     }

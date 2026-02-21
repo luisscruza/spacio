@@ -20,14 +20,13 @@ class Kernel
         try {
             $this->container->instance(Request::class, $request);
             $routeHandler = $this->container->get(RouteHandler::class);
+            $registrar = $this->container->get(RouteRegistrar::class);
 
             $dispatcher = simpleDispatcher(function (RouteCollector $collector) {
-                $routes = require BASE_PATH.'/routes/web.php';
+                $routes = $this->container->get(RouteRegistrar::class)->routes();
 
                 foreach ($routes as $route) {
-                    $collector->addRoute(
-                        ...$route
-                    );
+                    $collector->addRoute(...$route);
                 }
             });
 
@@ -39,7 +38,7 @@ class Kernel
             return $routeHandler->handle($routeInfo, $request);
         } catch (Throwable $throwable) {
             $renderer = new ExceptionRenderer;
-            
+
             if ($throwable instanceof HttpException) {
                 $content = $renderer->renderStatus(
                     $throwable->getStatusCode(),
