@@ -23,12 +23,23 @@ abstract class Entity
         $this->table = $this->resolveTable();
     }
 
-    public function create(array $attributes): static
+    public static function query(): StatementBuilder
     {
-        $this->fill($attributes);
-        $this->save();
+        $instance = new static;
 
-        return $this;
+        return new StatementBuilder(
+            $instance->connection,
+            $instance->table,
+            static::class,
+            $instance->primaryKey
+        );
+    }
+
+    public static function create(array $attributes): static
+    {
+        $entity = static::query()->create($attributes);
+
+        return $entity instanceof static ? $entity : new static;
     }
 
     public function fill(array $attributes): static
