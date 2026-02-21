@@ -9,7 +9,9 @@ class SQLiteConnection implements ConnectionInterface
 {
     public function __construct(
         protected PDO $pdo,
-    ) {}
+    ) {
+        //
+    }
 
     public function pdo(): PDO
     {
