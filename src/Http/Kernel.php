@@ -4,6 +4,7 @@ namespace Spacio\Framework\Http;
 
 use FastRoute\RouteCollector;
 use Spacio\Framework\Container\Container;
+use Spacio\Framework\Http\Exceptions\HttpException;
 use Throwable;
 
 use function FastRoute\simpleDispatcher;
@@ -38,6 +39,19 @@ class Kernel
             return $routeHandler->handle($routeInfo, $request);
         } catch (Throwable $throwable) {
             $renderer = new ExceptionRenderer;
+            
+            if ($throwable instanceof HttpException) {
+                $content = $renderer->renderStatus(
+                    $throwable->getStatusCode(),
+                    $throwable->getMessage(),
+                    $request
+                );
+
+                return new Response($content, $throwable->getStatusCode(), [
+                    'Content-Type' => 'text/html; charset=UTF-8',
+                ]);
+            }
+
             $content = $renderer->render($throwable, $request);
 
             return new Response($content, 500, [

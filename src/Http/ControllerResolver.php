@@ -6,6 +6,8 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use Spacio\Framework\Container\Container;
 use Spacio\Framework\Container\Exceptions\ContainerException;
+use Spacio\Framework\Database\Entity;
+use Spacio\Framework\Http\Exceptions\NotFoundHttpException;
 
 class ControllerResolver
 {
@@ -35,7 +37,24 @@ class ControllerResolver
     {
         $name = $parameter->getName();
         if (array_key_exists($name, $vars)) {
-            return $vars[$name];
+            $value = $vars[$name];
+            $type = $parameter->getType();
+
+            if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
+                $typeName = $type->getName();
+
+                if (is_subclass_of($typeName, Entity::class)) {
+                    $entity = $typeName::resolveRouteBinding($value);
+
+                    if (! $entity) {
+                        throw new NotFoundHttpException("{$typeName} not found.");
+                    }
+
+                    return $entity;
+                }
+            }
+
+            return $value;
         }
 
         $type = $parameter->getType();
