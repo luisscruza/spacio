@@ -6,13 +6,13 @@ class Request
 {
     private static $instance;
 
-    private function __construct(
-        private array $server,
-        private array $get,
-        private array $post,
-        private array $files,
-        private array $cookies,
-        private array $env
+    protected function __construct(
+        protected array $server,
+        protected array $get,
+        protected array $post,
+        protected array $files,
+        protected array $cookies,
+        protected array $env
     ) {
         //
     }
@@ -29,6 +29,18 @@ class Request
         }
 
         return self::$instance;
+    }
+
+    public static function from(Request $request): static
+    {
+        return new static(
+            $request->server,
+            $request->get,
+            $request->post,
+            $request->files,
+            $request->cookies,
+            $request->env
+        );
     }
 
     public function getMethod(): string

@@ -59,7 +59,17 @@ class ControllerResolver
 
         $type = $parameter->getType();
         if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
-            return $this->container->get($type->getName());
+            $typeName = $type->getName();
+
+            if (is_subclass_of($typeName, FormRequest::class)) {
+                $request = $this->container->get(Request::class);
+                $formRequest = $typeName::from($request);
+                $formRequest->validateResolved();
+
+                return $formRequest;
+            }
+
+            return $this->container->get($typeName);
         }
 
         if ($parameter->isDefaultValueAvailable()) {
