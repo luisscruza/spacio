@@ -7,25 +7,11 @@ use Spacio\Framework\Database\Contracts\ConnectionInterface;
 
 class UniqueRule implements Rule
 {
-    protected string $table;
-
-    protected ?string $column;
-
-    public function __construct(string $table, ?string $column = null)
-    {
-        if ($column === null && str_contains($table, ',')) {
-            [$table, $column] = array_pad(array_map('trim', explode(',', $table, 2)), 2, null);
-        }
-
-        $table = trim($table);
-        $column = $column !== null ? trim($column) : null;
-
-        if ($table === '') {
-            throw new RuntimeException('UniqueRule requires a table name.');
-        }
-
-        $this->table = $table;
-        $this->column = $column !== '' ? $column : null;
+    public function __construct(
+        protected string $table,
+        protected ?string $column = null,
+    ) {
+        //
     }
 
     public function validate(string $field, mixed $value, array $data): ?string
@@ -34,27 +20,27 @@ class UniqueRule implements Rule
             return null;
         }
 
-        $column = $this->column ?? $field;
+        $column = $this->column ?: $field;
         $connection = app(ConnectionInterface::class);
 
-        $sql = sprintf(
-            'SELECT 1 FROM %s WHERE %s = :value LIMIT 1',
-            $this->quoteIdentifier($this->table),
-            $this->quoteIdentifier($column)
+        $statement = $connection->pdo()->prepare(
+            "SELECT COUNT(*) FROM {$this->table} WHERE {$column} = :value"
         );
-
-        $statement = $connection->pdo()->prepare($sql);
         $statement->execute(['value' => $value]);
 
-        if ($statement->fetchColumn() !== false) {
-            return ':attribute must be unique.';
-        }
+        $count = (int) $statement->fetchColumn();
 
-        return null;
+        return $count > 0 ? ':attribute has already been taken.' : null;
     }
 
-    protected function quoteIdentifier(string $identifier): string
+    public static function fromParameter(string $parameter): self
     {
-        return '"'.str_replace('"', '""', $identifier).'"';
+        [$table, $column] = array_pad(explode(',', $parameter, 2), 2, null);
+
+        if (! $table) {
+            throw new RuntimeException('Unique rule requires a table name.');
+        }
+
+        return new self($table, $column ?: null);
     }
 }

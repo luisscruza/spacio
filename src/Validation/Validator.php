@@ -90,6 +90,10 @@ class Validator
             throw new RuntimeException("Validation rule {$class} must implement Rule.");
         }
 
+        if ($param !== null && method_exists($class, 'fromParameter')) {
+            return $class::fromParameter($param);
+        }
+
         $parameter = $param !== null ? $this->castParam($param) : null;
 
         return $parameter === null

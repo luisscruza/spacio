@@ -19,6 +19,7 @@ class RouteRegistrar
     {
         $routes = $this->loadRoutesFile();
         $routes = array_merge($routes, $this->loadAttributeRoutes());
+        $routes = array_merge($routes, $this->loadComponentRoutes());
 
         return $this->sortRoutes($routes);
     }
@@ -65,6 +66,15 @@ class RouteRegistrar
         }
 
         return $routes;
+    }
+
+    protected function loadComponentRoutes(): array
+    {
+        $endpoint = $this->config->get('components.endpoint', '/_spacio/component');
+
+        return [
+            ['POST', $endpoint, [\Spacio\Framework\Http\ComponentController::class, 'handle']],
+        ];
     }
 
     protected function routesFromController(string $class): array

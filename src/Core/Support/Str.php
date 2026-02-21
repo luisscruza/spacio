@@ -16,4 +16,12 @@ class Str
 
         return ucwords(strtolower($value));
     }
+
+    public static function studly(string $value): string
+    {
+        $value = str_replace(['-', '_'], ' ', $value);
+        $value = ucwords(strtolower($value));
+
+        return str_replace(' ', '', $value);
+    }
 }

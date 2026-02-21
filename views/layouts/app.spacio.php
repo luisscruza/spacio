@@ -12,5 +12,6 @@
             @yield('content')
         </main>
     </body>
+    <script src="/spacio.js" defer></script>
     </html>
 </template>

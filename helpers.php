@@ -1,5 +1,6 @@
 <?php
 
+use Spacio\Framework\Components\ComponentManager;
 use Spacio\Framework\Core\Config\ConfigRepository;
 use Spacio\Framework\Core\Support\App;
 use Spacio\Framework\Http\Response;
@@ -13,6 +14,15 @@ if (! function_exists('view')) {
         $content = $engine->render($name, $data);
 
         return new Response($content);
+    }
+}
+
+if (! function_exists('component')) {
+    function component(string $name, array $props = [], array $data = []): string
+    {
+        $manager = app(ComponentManager::class);
+
+        return $manager->render($name, $props, $data);
     }
 }
 

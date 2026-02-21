@@ -7,7 +7,7 @@
 
     @section('content')
         <div class="mx-auto w-full max-w-3xl px-6 py-12">
-            <div class="rounded-3xl border border-amber-100 bg-white/90 p-8 shadow-[0_24px_70px_rgba(15,23,42,0.12)]">
+             <!-- <div class="rounded-3xl border border-amber-100 bg-white/90 p-8 shadow-[0_24px_70px_rgba(15,23,42,0.12)]">
                 <div class="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
                     New user
                 </div>
@@ -47,7 +47,9 @@
                         <button type="submit" class="inline-flex items-center justify-center rounded-full bg-amber-500 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-400">Create user</button>
                     </div>
                 </form>
-            </div>
+            </div> -->
+            <!-- Component a la Livewire. -->
+            @component('users.create-form')
         </div>
     @endsection
 </template>

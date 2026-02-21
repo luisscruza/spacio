@@ -21,7 +21,6 @@ class Kernel
         try {
             $this->container->instance(Request::class, $request);
             $routeHandler = $this->container->get(RouteHandler::class);
-            $registrar = $this->container->get(RouteRegistrar::class);
 
             $dispatcher = simpleDispatcher(function (RouteCollector $collector) {
                 $routes = $this->container->get(RouteRegistrar::class)->routes();
