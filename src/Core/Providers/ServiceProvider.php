@@ -8,7 +8,9 @@ abstract class ServiceProvider
 {
     public function __construct(
         protected Container $container,
-    ) {}
+    ) {
+        //
+    }
 
     abstract public function register(): void;
 }
