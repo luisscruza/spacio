@@ -10,10 +10,19 @@ abstract class FormRequest extends Request
 
     abstract public function rules(): array;
 
+    public function messages(): array
+    {
+        return [];
+    }
+
     public function validateResolved(): void
     {
         $validator = new Validator;
-        $this->validated = $validator->validate($this->all(), $this->rules());
+        $this->validated = $validator->validate(
+            $this->all(),
+            $this->rules(),
+            $this->messages()
+        );
     }
 
     public function validated(): array

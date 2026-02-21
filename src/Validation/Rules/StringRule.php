@@ -10,6 +10,10 @@ class StringRule implements Rule
             return null;
         }
 
-        return is_string($value) ? null : "{$field} must be a string.";
+        if (is_string($value)) {
+            return null;
+        }
+
+        return ':attribute must be a string.';
     }
 }

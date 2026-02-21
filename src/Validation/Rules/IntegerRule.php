@@ -10,8 +10,10 @@ class IntegerRule implements Rule
             return null;
         }
 
-        return filter_var($value, FILTER_VALIDATE_INT) !== false
-            ? null
-            : "{$field} must be an integer.";
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
+            return null;
+        }
+
+        return ':attribute must be an integer.';
     }
 }

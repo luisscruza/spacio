@@ -16,6 +16,10 @@ class MinRule implements Rule
 
         $length = is_string($value) ? strlen($value) : (is_numeric($value) ? (float) $value : 0);
 
-        return $length >= $this->min ? null : "{$field} must be at least {$this->min}.";
+        if ($length >= $this->min) {
+            return null;
+        }
+
+        return ":attribute must be at least {$this->min}.";
     }
 }

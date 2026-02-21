@@ -16,6 +16,10 @@ class MaxRule implements Rule
 
         $length = is_string($value) ? strlen($value) : (is_numeric($value) ? (float) $value : 0);
 
-        return $length <= $this->max ? null : "{$field} must be at most {$this->max}.";
+        if ($length <= $this->max) {
+            return null;
+        }
+
+        return ":attribute must be at most {$this->max}.";
     }
 }

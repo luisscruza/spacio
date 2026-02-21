@@ -3,14 +3,16 @@
 namespace Spacio\Framework\Validation;
 
 use RuntimeException;
+use Spacio\Framework\Core\Support\Str;
 use Spacio\Framework\Validation\Rules\NullableRule;
 use Spacio\Framework\Validation\Rules\Rule;
 
 class Validator
 {
-    public function validate(array $data, array $rules): array
+    public function validate(array $data, array $rules, array $messages = []): array
     {
         $errors = [];
+        $messageMap = $this->normalizeMessages($messages);
 
         foreach ($rules as $field => $ruleSet) {
             $value = $data[$field] ?? null;
@@ -26,9 +28,18 @@ class Validator
                     continue;
                 }
 
+                // $field = Str::uppercase($field);
+
                 $result = $rule->validate($field, $value, $data);
+
                 if ($result !== null) {
-                    $errors[$field][] = $result;
+                    $ruleKey = $this->ruleKey($rule);
+                    $override = $messageMap[$field.'.'.$ruleKey]
+                        ?? $messageMap[$field]
+                        ?? null;
+
+                    $message = $override ?? $result;
+                    $errors[$field][] = $this->formatMessage($message, $field);
                 }
             }
         }
@@ -115,5 +126,39 @@ class Validator
         }
 
         return false;
+    }
+
+    protected function normalizeMessages(array $messages): array
+    {
+        $normalized = [];
+
+        foreach ($messages as $key => $value) {
+            if (is_int($key)) {
+                continue;
+            }
+
+            $normalized[$key] = (string) $value;
+        }
+
+        return $normalized;
+    }
+
+    protected function ruleKey(Rule $rule): string
+    {
+        $class = $rule::class;
+        $short = substr($class, strrpos($class, '\\') + 1);
+
+        if (str_ends_with($short, 'Rule')) {
+            $short = substr($short, 0, -4);
+        }
+
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $short));
+    }
+
+    protected function formatMessage(string $message, string $field): string
+    {
+        $name = Str::titleize($field);
+
+        return str_replace([':attribute', '{attribute}'], $name, $message);
     }
 }

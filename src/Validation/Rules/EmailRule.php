@@ -10,8 +10,10 @@ class EmailRule implements Rule
             return null;
         }
 
-        return filter_var($value, FILTER_VALIDATE_EMAIL) !== false
-            ? null
-            : "{$field} must be a valid email address.";
+        if (filter_var($value, FILTER_VALIDATE_EMAIL) !== false) {
+            return null;
+        }
+
+        return ':attribute must be a valid email address.';
     }
 }

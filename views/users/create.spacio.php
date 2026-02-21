@@ -23,8 +23,10 @@
                             type="text"
                             placeholder="Enter user name"
                             class="mt-3 w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-100"
+                            value="{{ old('name') }}"
                             required
                         />
+                        <p class="mt-2 text-xs text-rose-600">@errors('name')</p>
                     </div>
 
                     <div class="rounded-2xl border border-stone-200 bg-white px-6 py-5">
@@ -35,7 +37,9 @@
                             type="email"
                             placeholder="hello@spacio.dev"
                             class="mt-3 w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-700 shadow-sm focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-100"
+                            value="{{ old('email') }}"
                         />
+                        <p class="mt-2 text-xs text-rose-600">@errors('email')</p>
                     </div>
 
                     <div class="flex flex-col gap-3 sm:flex-row sm:justify-between">
