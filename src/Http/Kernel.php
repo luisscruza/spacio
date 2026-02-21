@@ -5,6 +5,7 @@ namespace Spacio\Framework\Http;
 use FastRoute\RouteCollector;
 use Spacio\Framework\Container\Container;
 use Spacio\Framework\Http\Exceptions\HttpException;
+use Spacio\Framework\Validation\ValidationException;
 use Throwable;
 
 use function FastRoute\simpleDispatcher;
@@ -37,6 +38,18 @@ class Kernel
 
             return $routeHandler->handle($routeInfo, $request);
         } catch (Throwable $throwable) {
+            if ($throwable instanceof ValidationException) {
+                Session::start();
+                Session::flash('errors', $throwable->errors());
+                Session::flash('old', $request->all());
+
+                $referer = $request->server('HTTP_REFERER', '/');
+
+                return new Response('', 302, [
+                    'Location' => $referer,
+                ]);
+            }
+
             $renderer = new ExceptionRenderer;
 
             if ($throwable instanceof HttpException) {
