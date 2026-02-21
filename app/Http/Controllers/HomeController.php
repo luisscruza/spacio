@@ -9,9 +9,8 @@ class HomeController
 {
     public function index(): Response
     {
-        $users = (new User)->all();
+        $users = User::query()->get();
 
-        dd($users);
-        return view('home');
+        return view('home', ['users' => $users]);
     }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\User;
 use Spacio\Framework\Http\Response;
 
 class UserController
 {
-    public function show($id): Response
+    public function show(User $user): Response
     {
-        return new Response('Welcome to'." User ID: $id");
+        return view('users.show', [
+            'user' => $user,
+        ]);
     }
 }
