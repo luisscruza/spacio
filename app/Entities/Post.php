@@ -8,5 +8,5 @@ use Spacio\Framework\Database\Entity;
 #[Table('posts')]
 class Post extends Entity
 {
-    protected ?string $table = 'posts';
+    //
 }
