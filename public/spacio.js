@@ -1,5 +1,59 @@
 (() => {
   const endpoint = '/_spacio/component'
+  const debounceTimers = new Map()
+
+  const runScripts = (root) => {
+    const scripts = root.querySelectorAll('script')
+    scripts.forEach((script) => {
+      const replacement = document.createElement('script')
+      if (script.type) replacement.type = script.type
+      if (script.src) {
+        replacement.src = script.src
+        replacement.defer = script.defer
+        replacement.async = script.async
+      } else {
+        replacement.textContent = script.textContent
+      }
+      script.replaceWith(replacement)
+    })
+  }
+
+  const replaceComponentHtml = (component, html, target) => {
+    if (!target) {
+      component.outerHTML = html
+      return
+    }
+
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(html, 'text/html')
+    const incoming = doc.querySelector('[data-spacio-component]')
+    if (!incoming) return
+
+    const nextIsland = incoming.querySelector(`[data-spacio-island="${target}"]`)
+    const currentIsland = component.querySelector(`[data-spacio-island="${target}"]`)
+    if (!nextIsland || !currentIsland) return
+
+    currentIsland.replaceWith(nextIsland)
+    runScripts(nextIsland)
+  }
+
+  const triggerAction = (el) => {
+    const debounce = parseInt(el.getAttribute('data-spacio-debounce') || '0', 10)
+
+    if (debounce > 0) {
+      const existing = debounceTimers.get(el)
+      if (existing) {
+        clearTimeout(existing)
+      }
+
+      const timer = setTimeout(() => handleAction(el), debounce)
+      debounceTimers.set(el, timer)
+      return
+    }
+
+    handleAction(el)
+  }
+
 
   const showErrorModal = (html) => {
     let overlay = document.getElementById('spacio-error-overlay')
@@ -78,7 +132,8 @@
     }
 
     const html = await response.text()
-    component.outerHTML = html
+    const target = el.getAttribute('data-spacio-target')
+    replaceComponentHtml(component, html, target)
   }
 
   document.addEventListener('click', (event) => {
@@ -90,8 +145,9 @@
     }
 
     event.preventDefault()
-    handleAction(target)
+    triggerAction(target)
   })
+
 
   document.addEventListener('submit', (event) => {
     const form = event.target.closest('form')
@@ -101,6 +157,13 @@
     if (!action) return
 
     event.preventDefault()
-    handleAction(form)
+    triggerAction(form)
+  })
+
+  document.addEventListener('input', (event) => {
+    const target = event.target.closest('[data-spacio-action]')
+    if (!target) return
+
+    triggerAction(target)
   })
 })()
